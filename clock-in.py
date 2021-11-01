@@ -8,7 +8,8 @@ import re
 import datetime
 import time
 import sys
-
+import time
+import random
 
 class ClockIn(object):
     """Hit card class
@@ -144,11 +145,14 @@ class DecodeError(Exception):
 
 def main(username, password):
     """Hit card process
-
+    
+   
     Arguments:
         username: (str) 浙大统一认证平台用户名（一般为学号）
         password: (str) 浙大统一认证平台密码
     """
+    ra = random.randint(0,7200)
+    time.sleep(ra)
     print("\n[Time] %s" %
           datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     print("🚌 打卡任务启动")
