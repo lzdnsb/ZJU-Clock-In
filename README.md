@@ -1,5 +1,13 @@
 # 自动打卡教程
 
+hello
+
+#### 自行更改部分
+
+打卡时间更改为9-11点10分各打一次，加了random(1200)即10分钟误差进入
+
+
+
 **信息同步与问题反馈群:**
 
 <img src="https://gitee.com/dizhipeng/image/raw/master/img/image-20210806110359202.png" alt="image-20210806110359202" style="zoom:50%;" />

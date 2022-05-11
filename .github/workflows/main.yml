@@ -3,11 +3,11 @@ name: ClockIn
 on:
   push:
     branches: 
-      - master
+      - main
   watch:
     types: started
   schedule:
-    - cron: '35 23 * * *'
+    - cron: '0 0-2 * * *'
 
 jobs:
   ClockIn:
@@ -19,7 +19,10 @@ jobs:
       - name: Install python3
         run: |
           sudo -E apt-get -yqq update
-          sudo -E apt-get -yqq install python3
+          sudo -E apt-get -yqq install python3.8
+      - name: Install ddddocr
+        run: |
+          sudo pip3 install ddddocr==1.1.0
       - name: Clock In
         env:
           ACCOUNT: ${{ secrets.ACCOUNT }}

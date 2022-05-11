@@ -10,6 +10,7 @@ import time
 import sys
 import time
 import random
+import ddddocr
 
 class ClockIn(object):
     """Hit card class
@@ -29,6 +30,7 @@ class ClockIn(object):
         self.password = password
         self.login_url = "https://zjuam.zju.edu.cn/cas/login?service=https%3A%2F%2Fhealthreport.zju.edu.cn%2Fa_zju%2Fapi%2Fsso%2Findex%3Fredirect%3Dhttps%253A%252F%252Fhealthreport.zju.edu.cn%252Fncov%252Fwap%252Fdefault%252Findex"
         self.base_url = "https://healthreport.zju.edu.cn/ncov/wap/default/index"
+        self.captcha_url = 'https://healthreport.zju.edu.cn/ncov/wap/default/code'
         self.save_url = "https://healthreport.zju.edu.cn/ncov/wap/default/save"
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
@@ -89,6 +91,22 @@ class ClockIn(object):
             raise RegexMatchError('Relative info not found in html with regex')
         except json.decoder.JSONDecodeError:
             raise DecodeError('JSON decode error')
+        
+        
+
+        # 试试ocr
+        try:
+            # 查询cookie
+            # print(self.sess.cookies["eai-sess"])
+
+            ocr = ddddocr.DdddOcr() # 使用老版本ddddocr
+            cookie_dict = {'eai-sess': self.sess.cookies["eai-sess"]}
+            self.sess.cookies = requests.cookies.cookiejar_from_dict(cookie_dict)
+            resp = self.sess.get(url=self.captcha_url, headers=self.headers)
+            cap = ocr.classification(resp.content)
+        except Exception as e:
+            print("Captcha ocr error: ",e)
+
 
         new_info = old_info.copy()
         new_info['id'] = new_id
@@ -106,9 +124,13 @@ class ClockIn(object):
         new_info['sfsqhzjkk'] = 1   # 是否申领杭州健康码
         new_info['sqhzjkkys'] = 1   # 杭州健康吗颜色，1:绿色 2:红色 3:黄色
         new_info['sfqrxxss'] = 1    # 是否确认信息属实
+        new_info['szgjcs'] = ""
+        new_info['gwszdd'] = ""
         new_info['jcqzrq'] = ""
         new_info['gwszdd'] = ""
-        new_info['szgjcs'] = ""
+        new_info['ismoved'] = 0
+        # captcha
+        new_info['verifyCode'] = cap
 
         # 2021.08.05 Fix 2
         magics = re.findall(r'"([0-9a-f]{32})":\s*"([^\"]+)"', html)
@@ -151,8 +173,8 @@ def main(username, password):
         username: (str) 浙大统一认证平台用户名（一般为学号）
         password: (str) 浙大统一认证平台密码
     """
-    ra = random.randint(0,7200)
-    time.sleep(ra)
+    ra = random.randint(0, 1200)
+    # time.sleep(ra)
     print("\n[Time] %s" %
           datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     print("🚌 打卡任务启动")
@@ -194,6 +216,8 @@ def main(username, password):
 if __name__ == "__main__":
     username = sys.argv[1]
     password = sys.argv[2]
+    # SETTING
+    # 测试的时候用自己的浙大通行证替换掉上面两个参数值
     try:
         main(username, password)
     except Exception:
