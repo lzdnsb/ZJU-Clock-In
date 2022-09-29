@@ -30,7 +30,7 @@ class ClockIn(object):
         self.password = password
         self.login_url = "https://zjuam.zju.edu.cn/cas/login?service=https%3A%2F%2Fhealthreport.zju.edu.cn%2Fa_zju%2Fapi%2Fsso%2Findex%3Fredirect%3Dhttps%253A%252F%252Fhealthreport.zju.edu.cn%252Fncov%252Fwap%252Fdefault%252Findex"
         self.base_url = "https://healthreport.zju.edu.cn/ncov/wap/default/index"
-        self.captcha_url = 'https://healthreport.zju.edu.cn/ncov/wap/default/code'
+        #self.captcha_url = 'https://healthreport.zju.edu.cn/ncov/wap/default/code'
         self.save_url = "https://healthreport.zju.edu.cn/ncov/wap/default/save"
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
@@ -99,11 +99,12 @@ class ClockIn(object):
             # 查询cookie
             # print(self.sess.cookies["eai-sess"])
 
-            ocr = ddddocr.DdddOcr() # 使用老版本ddddocr
+            #ocr = ddddocr.DdddOcr() # 使用老版本ddddocr
             cookie_dict = {'eai-sess': self.sess.cookies["eai-sess"]}
             self.sess.cookies = requests.cookies.cookiejar_from_dict(cookie_dict)
-            resp = self.sess.get(url=self.captcha_url, headers=self.headers)
-            cap = ocr.classification(resp.content)
+            #resp = self.sess.get(url=self.captcha_url, headers=self.headers)
+            
+            #cap = ocr.classification(resp.content)
         except Exception as e:
             print("Captcha ocr error: ",e)
 
@@ -130,7 +131,7 @@ class ClockIn(object):
         new_info['gwszdd'] = ""
         new_info['ismoved'] = 0
         # captcha
-        new_info['verifyCode'] = cap
+        #new_info['verifyCode'] = cap
 
         # 2021.08.05 Fix 2
         magics = re.findall(r'"([0-9a-f]{32})":\s*"([^\"]+)"', html)
